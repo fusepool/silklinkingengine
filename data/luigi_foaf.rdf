@@ -1,0 +1,182 @@
+<?xml version="1.0"?>
+<!-- My URI: http://www.sharesemantics.com/people/luigi/foaf.rdf#me -->
+<!-- The following entity is used to substitute the URIref of the typed literals with &xsd -->
+<!DOCTYPE rdf:RDF [<!ENTITY xsd "http://www.w3.org/2001/XMLSchema#">]>
+<rdf:RDF 
+		xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#" 
+		xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+		xmlns:geo="http://www.w3.org/2003/01/geo/wgs84_pos#" 
+		xmlns:dc="http://purl.org/dc/elements/1.1/" 
+		xmlns:dcterms="http://purl.org/dc/terms/"
+		xmlns:bio="http://purl.org/vocab/bio/0.1/" 
+		xmlns:rel="http://purl.org/vocab/relationship/"
+		xmlns:foaf="http://xmlns.com/foaf/0.1/" 
+		xmlns:lang="http://purl.org/net/inkel/rdf/schemas/lang/1.1#"
+		xmlns:ad="http://schemas.talis.com/2005/address/schema#"
+		xmlns:cc="http://creativecommons.org/schema.rdf"
+		xmlns:cert="http://www.w3.org/ns/auth/cert#">
+                
+  <rdf:Description rdf:about="http://www.sharesemantics.com/foaf.rdf#luigi">
+  	<dc:creator>
+  		<foaf:Person>
+  			<foaf:mbox_sha1sum>799ffcad6c44171ef4ec2d863d7cd9aca869982c</foaf:mbox_sha1sum> 
+  		</foaf:Person>
+  	</dc:creator>
+  </rdf:Description>
+  
+  <foaf:PersonalProfileDocument rdf:about="http://www.sharesemantics.com/foaf.rdf#luigi">
+   <foaf:maker rdf:resource="http://www.sharesemantics.com/people/luigi/foaf.rdf#me"/>
+   <foaf:primaryTopic rdf:resource="http://www.sharesemantics.com/foaf.rdf#luigi"/>
+   <cc:license rdf:resource="http://web.resource.org/cc/PublicDomain"/>
+</foaf:PersonalProfileDocument>
+  
+  <foaf:Person rdf:about="http://www.sharesemantics.com/foaf.rdf#luigi">
+    <foaf:name>Luigi Selmi</foaf:name>
+    <foaf:title>MSc</foaf:title>
+    <foaf:givenname>Luigi</foaf:givenname>
+    <foaf:family_name>Selmi</foaf:family_name>
+    <bio:olb>Italian; software engineer; </bio:olb>
+    <bio:event>
+      <bio:Birth>
+        <bio:date>October 9th</bio:date>
+        <bio:place>Roma</bio:place>
+      </bio:Birth>
+    </bio:event>
+    <bio:keywords>
+      semantic web, ontology, software developer, physics, java, climbing, meteorology,
+      lidar, collective intelligence
+    </bio:keywords>
+
+    <foaf:nick>Luigi</foaf:nick>
+    <foaf:yahooChatID>luigi_selmi</foaf:yahooChatID>
+    <foaf:weblog rdf:resource="http://www.sharesemantics.com/blog"/>
+    <foaf:mbox rdf:resource="mailto:luigi@sharesemantics.com"/>
+    <foaf:phone rdf:type="http://skype.com/" rdf:resource="callto://luigiselmi" />
+    
+    <lang:masters>it</lang:masters>
+    <lang:masters>en</lang:masters>
+    
+    <foaf:homepage rdf:resource="http://www.sharesemantics.com"/>
+    <foaf:pubblications>
+    	<foaf:Document rdf:about="http://www.gps.caltech.edu/~vijay/Papers/Polarisation/castracane-etal-01.pdf">
+        <dc:title>Ground-Based Remote Sensing of Wind, Temperature and Aerosol Backscattering
+in an Urban Environment During Different Atmospheric Stability Conditions</dc:title>
+        <dc:description>Instruments: LIDAR (Aerosols), SODAR(Wind), Radiometer(Temperature) </dc:description>
+        <dc:publisher>Physics and Chemistry of the Earth, Part B, 2001 Elsevier Science Ltd.</dc:publisher>
+        <dc:subject>Remote Sensing, LIDAR, Planetary Boundary Layer</dc:subject>
+      </foaf:Document>
+    </foaf:pubblications>
+    
+    <foaf:depiction rdf:resource="http://www.sharesemantics.com/people/luigi-laga-240.jpg"/>
+    <foaf:img rdf:resource="http://www.sharesemantics.com/people/luigi-laga-240.jpg"/>
+
+    <foaf:interest>
+      <foaf:Document rdf:about="http://www.sharesemantics.com">
+        <dc:title>ShareSemantics</dc:title>
+        <dc:description>My site about Semantic Web and Ontology-Driven Software Development</dc:description>
+      </foaf:Document>
+    </foaf:interest>
+    
+    <foaf:interest>
+      <foaf:Document rdf:about="http://www.geocities.com/verivolontaridellasofferenza">
+        <dc:title>WDSAA - Veri Volontari Della Sofferenza e Alpinisti Anonimi</dc:title>
+        <dc:description>My site about climbing, skiing, mountains and other stuff</dc:description>
+      </foaf:Document>
+    </foaf:interest>
+    
+    <foaf:interest>
+      <foaf:Document rdf:about="http://www.flickr.com/photos/susterru/">
+        <dc:title>Photos from susterru</dc:title>
+        <dc:description>Some photos about me and friends</dc:description>
+      </foaf:Document>
+    </foaf:interest>
+    <foaf:holdsAccount>
+	<foaf:OnlineAccount>
+		<foaf:accountName>aiguille</foaf:accountName>
+		<foaf:accountServiceHomepage rdf:resource="http://delicio.us"/>
+	</foaf:OnlineAccount>
+    </foaf:holdsAccount>
+    
+    <foaf:interest>
+      <foaf:Document rdf:about="http://del.icio.us/aiguille">
+        <dc:title>del.icio.us</dc:title>
+        <dc:description>My bookmarks on del.icio.us</dc:description>
+      </foaf:Document>
+    </foaf:interest>
+    
+    
+    
+    <!-- Home address: Rome, Italy -->
+   
+    <foaf:based_near>
+     <geo:Point>
+        <geo:lat>41.874081</geo:lat>
+        <geo:long>12.510449</geo:long>
+        <geo:alt>40.0</geo:alt>
+     </geo:Point>
+    </foaf:based_near>
+    
+    <ad:streetAddress>12 Piazza Roselle</ad:streetAddress>
+    <ad:postalCode>00179</ad:postalCode>
+    <ad:localityName>Rome</ad:localityName>
+    <ad:countryName>Italy</ad:countryName>
+    
+    
+    <!-- Projects -->
+    <foaf:currentProject>
+  		<foaf:Document rdf:about="http://www.okkam.it">
+	  		<dc:title>BCC</dc:title>
+	        	<dc:description>eGov Project</dc:description>
+        	</foaf:Document>
+        	
+    </foaf:currentProject>
+  	
+  
+  <foaf:knows> 
+      <foaf:Person rdf:about="http://www.go5th.com/foaf/foaf.rdf#gcosta">
+        <foaf:name>Giorgio Costa</foaf:name>
+        <foaf:nick>Giorgio</foaf:nick>
+        <foaf:mbox_sha1sum>e2aa49da814149f09332535d6df47856d6106b32</foaf:mbox_sha1sum>
+        <foaf:homepage rdf:resource="http://www.go5th.com"/>
+        <foaf:img rdf:resource="http://www.go5th.com/foaf/jimi.jpg"/>
+        <foaf:based_near rdf:resource="http://dbpedia.org/resource/Rome"/>
+        <rdfs:seeAlso rdf:resource="http://www.go5th.com/foaf/foaf.rdf#gcosta" /> 
+      </foaf:Person>
+    </foaf:knows>
+
+   <foaf:knows> 
+      <foaf:Person rdf:about="http://my-profile.eu/people/seidm/card#me">
+        <foaf:name>Seid Muhie Yimam</foaf:name>
+        <foaf:nick>seidm</foaf:nick>
+        <foaf:img rdf:resource="http://www.okkam.biz/images/okkamImg/article/seid.JPG"/>
+        <rdfs:seeAlso rdf:resource="http://my-profile.eu/people/seidm/card#me" /> 
+      </foaf:Person>
+    </foaf:knows>
+  
+
+	<cert:key>
+      <cert:RSAPublicKey>
+        <rdfs:comment>Created 5 April 2012</rdfs:comment>
+        <rdfs:comment>Certificate Subject Alt Name URI http://www.sharesemantics.com/foaf.rdf#luigi</rdfs:comment>
+        <cert:modulus rdf:datatype="http://www.w3.org/2001/XMLSchema#hexBinary">
+bfc99e25c57294c209c7f203d8c01efc6263cf2d8a4ee385950671778df611daacd60038c2fdff66f94c22cf40cf30e27863bfd5891b0921d889b6966395262639e05c22a87b1831f8dc393725b6faab59326bee3768776d0e241f8bdca99abb83e4dc4d37fa1f959d3484594b1770435a6cedae6ff869c37a69491bfa724103f287b9681d776f3cb971cd939c7919b62d29ecb1d134ca7a9b889c512540f229ecdbbf847ae2bf45278f4ad0d694e8d4bd7247cc8f440993c7e1ba811e145eb8ba08e48308a1a49d4d55a821a1f835fbf25b6a3329c9acd055f3e1354868889c946666bc81b826007ed0edc8c32caa7ab687bc1670775eb425fae669832d21ef
+</cert:modulus>
+        <cert:exponent rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">65537</cert:exponent>
+      </cert:RSAPublicKey>
+    </cert:key>
+
+   <cert:key>
+      <cert:RSAPublicKey>
+        <rdfs:comment>Created May 1st 2012 (from my-profile.eu)</rdfs:comment>
+        <rdfs:comment>Certificate Subject Alt Name URI https://my-profile.eu/people/luigiselmi/card#me</rdfs:comment>
+        <cert:modulus rdf:datatype="http://www.w3.org/2001/XMLSchema#hexBinary">
+dcc65df43072c440e2544bc2f57aadb3957eb736b29b8f141dfb8bfd1b6cef9928ff2ece602c4f3f6c1a150ef89ea0d3463415aabfe066efd3a126b0bd8bab4aea5bd8cbd809bd9fcfa7a4ec1445baaa8ded6942221b39243378a53701164897f84b3ef2a7d0bdc85a1528273e5ec892dcf620d039f79c8aeb047e097e57008e67829e7e784e625919a8cf3289cfd0b08d18871d17e888ec55f7796cb8f3853a04436ea38dbf2816a51262f05906a7248ffed19fa65d9d6229a14177e7bdf38a6e81919a7e4d08bd1b81c23944c3d0d281a7459cc6c2e96dd9129ac97272495ff71cf04c476b9206a7af3a84a45940ac370ffef5b7470a81db23829f4a45ddd1
+</cert:modulus>
+        <cert:exponent rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">65537</cert:exponent>
+      </cert:RSAPublicKey>
+    </cert:key>
+	
+  </foaf:Person>
+ 
+ 
+</rdf:RDF>

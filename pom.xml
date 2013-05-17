@@ -1,0 +1,143 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>eu.fusepool</groupId>
+	<artifactId>silklinking-engine</artifactId>
+	<version>0.1</version>
+	<packaging>bundle</packaging>
+
+	<parent>
+		<groupId>org.apache.stanbol</groupId>
+		<artifactId>org.apache.stanbol.enhancer.parent</artifactId>
+		<version>0.10.0-SNAPSHOT</version>
+	</parent>
+	
+	<name>Fusepool: patent linking engine</name>
+
+	<developers>
+		<developer>
+			<name>Giorgio Costa</name>
+		</developer>
+	</developers>
+
+	<inceptionYear>2013</inceptionYear>
+
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<stanbol.version>0.10.0-SNAPSHOT</stanbol.version>
+		<silk.fusepool.api.version>0.7.0</silk.fusepool.api.version>
+	</properties>
+
+
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.felix</groupId>
+				<artifactId>maven-bundle-plugin</artifactId>
+				<extensions>true</extensions>
+				<inherited>true</inherited>
+				<configuration>
+					<instructions>
+						<Bundle-Category>Stanbol Enhancer</Bundle-Category>
+						<Embed-Dependency>xercesImpl;commons-lang3;xml-resolver;scope=compile;rdf.jena.serializer</Embed-Dependency>
+						<Embed-Transitive>true</Embed-Transitive>
+						<Import-Package>!sun.io.*, * </Import-Package>
+					</instructions>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.felix</groupId>
+				<artifactId>maven-scr-plugin</artifactId>
+			</plugin>
+		</plugins>
+	</build>
+
+
+
+	<dependencies>
+
+		<dependency>
+			<groupId>org.apache.stanbol</groupId>
+			<artifactId>org.apache.stanbol.commons.web.base</artifactId>
+			<version>0.11.0-SNAPSHOT</version>
+			<exclusions>
+				<exclusion>
+					<groupId>com.hp.hpl.jena</groupId>
+					<artifactId>tdb</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>xerces</groupId>
+					<artifactId>xercesImpl</artifactId>
+				</exclusion>
+			</exclusions>
+			<!-- <exclusions> <exclusion> <groupId>org.apache.clerezza</groupId> <artifactId>rdf.jena.serializer</artifactId> 
+				</exclusion> </exclusions> -->
+		</dependency>
+
+
+		<dependency>
+			<groupId>xerces</groupId>
+			<artifactId>xercesImpl</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>xml-resolver</groupId>
+			<artifactId>xml-resolver</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.stanbol</groupId>
+			<artifactId>org.apache.stanbol.enhancer.servicesapi</artifactId>
+			<version>${stanbol.version}</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.stanbol</groupId>
+			<artifactId>org.apache.stanbol.commons.stanboltools.offline</artifactId>
+			<version>${stanbol.version}</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.stanbol</groupId>
+			<artifactId>org.apache.stanbol.commons.indexedgraph</artifactId>
+			<version>${stanbol.version}</version>
+			<scope>provided</scope>
+		</dependency>
+		<!-- <dependency> <groupId>org.apache.stanbol</groupId> <artifactId>org.apache.stanbol.entityhub.model.clerezza</artifactId> 
+			<version>${stanbol.version}</version> </dependency> -->
+		<dependency>
+			<groupId>org.apache.felix</groupId>
+			<artifactId>org.apache.felix.scr.annotations</artifactId>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.clerezza</groupId>
+			<artifactId>rdf.core</artifactId>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-lang3</artifactId>
+			<version>3.1</version>
+		</dependency>
+		<dependency>
+			<groupId>commons-io</groupId>
+			<artifactId>commons-io</artifactId>
+		</dependency>
+
+		<!-- fusepool dependencies -->
+		<dependency>
+			<groupId>eu.fusepool</groupId>
+			<artifactId>silk-fusepool-api</artifactId>
+			<version>${silk.fusepool.api.version}</version>
+		</dependency>
+
+
+		<dependency>
+			<groupId>org.apache.clerezza</groupId>
+			<artifactId>rdf.jena.serializer</artifactId>
+
+		</dependency>
+	</dependencies>
+
+
+</project>
