@@ -67,8 +67,8 @@ public class PatentLinkingEnhancementEngine
 	protected ComponentContext componentContext ;
 	protected BundleContext    bundleContext ;
 	
-	String sparqlEndpoint = "http://cabernet:3030/dataset/query" ;
-	boolean stick2rdfxml = true ;
+	String sparqlEndpoint = "http://platform.fusepool.info/sparql" ;
+	//boolean stick2rdfxml = true ; //false=prende ilcontent-item
 	
 //	@Reference
 //	protected Parser parser ;
@@ -85,23 +85,33 @@ public class PatentLinkingEnhancementEngine
 	 * @see org.apache.stanbol.enhancer.servicesapi.EnhancementEngine#canEnhance(org.apache.stanbol.enhancer.servicesapi.ContentItem)
 	 */
 	public int canEnhance(ContentItem ci) throws EngineException {
-		if(stick2rdfxml==false) 
-			return ENHANCE_SYNCHRONOUS ;
+		
+		//if(stick2rdfxml==false) 
+		//	return ENHANCE_SYNCHRONOUS ;
+		
 		if(SupportedFormat.RDF_XML.equals(ci.getMimeType())) 
-				return ENHANCE_SYNCHRONOUS ;
-		MGraph rdfGraph = ci.getMetadata() ;
-		if(rdfGraph.isEmpty())
+			return ENHANCE_ASYNC;
+		
+		//MGraph rdfGraph = ci.getMetadata() ;
+		
+		if(ci.getMetadata().isEmpty())
 			return CANNOT_ENHANCE ;
-		return ENHANCE_SYNCHRONOUS;
+		
+		return ENHANCE_ASYNC;
+		
 	}
 
 	/* (non-Javadoc)
 	 * @see org.apache.stanbol.enhancer.servicesapi.EnhancementEngine#computeEnhancements(org.apache.stanbol.enhancer.servicesapi.ContentItem)
 	 */
 	public void computeEnhancements(ContentItem ci) throws EngineException {
-		SilkJob job = new SilkJob(bundleContext, sparqlEndpoint, stick2rdfxml) ;
+		
+		SilkJob job = new SilkJob(bundleContext, sparqlEndpoint) ;
+		
 		try {
+			
 			job.exceuteJob(ci) ;
+			
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -122,10 +132,13 @@ public class PatentLinkingEnhancementEngine
 			sparqlEndpoint = (String) o ;
 		}
 		
+		/*
 		 o = dict.get("STICK2RDF_XML") ;
 			if(o!=null)  {
 				stick2rdfxml = (Boolean) o ;
 			}
+			
+			*/
 		
 //	    File f = bundleContext.getDataFile("vaffanculo.txt");
 //	    FileOutputStream os = new FileOutputStream(f);

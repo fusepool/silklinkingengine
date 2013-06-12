@@ -41,7 +41,7 @@ public class SilkJob {
 	
 	private static final boolean holdDataFiles = true ;
 	private static final boolean debug = true ;
-	private boolean stick2RDF_XML = false ;
+	//private boolean stick2RDF_XML = false ;
 	
 	protected BundleContext    bundleContext ;
 	
@@ -56,10 +56,10 @@ public class SilkJob {
 	String config ;
 	
 	
-	public SilkJob(BundleContext ctx, String sparqlEndpoint, boolean stick2rdfxml) {
+	public SilkJob(BundleContext ctx, String sparqlEndpoint) {
 		bundleContext = ctx ;
 		this.sparqlEndpoint = sparqlEndpoint ;
-		stick2RDF_XML = stick2rdfxml ;
+		//stick2RDF_XML = stick2rdfxml ;
 	}
 	
 	@SuppressWarnings("unused")
@@ -80,7 +80,7 @@ public class SilkJob {
 			OutputStream rdfOS = new FileOutputStream(rdfData) ;
 			
 			String mimeType=ci.getMimeType() ;	
-			if(stick2RDF_XML && !SupportedFormat.RDF_XML.equals(mimeType)) {
+			if(!SupportedFormat.RDF_XML.equals(mimeType)) {
 				MGraph ciMetadata = ci.getMetadata() ;
 				if(ciMetadata.isEmpty()) {
 					// nothing to enhance :-(
