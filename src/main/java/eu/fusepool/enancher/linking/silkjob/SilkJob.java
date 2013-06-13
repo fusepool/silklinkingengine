@@ -23,6 +23,8 @@ import org.apache.stanbol.commons.indexedgraph.IndexedMGraph;
 import org.apache.stanbol.enhancer.servicesapi.ContentItem;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import eu.fusepool.java.silk.client.SilkClient;
 
@@ -54,6 +56,9 @@ public class SilkJob {
 	File outputData ;
 	
 	String config ;
+	
+	final Logger logger = LoggerFactory.getLogger(this.getClass()) ;
+	
 	
 	
 	public SilkJob(BundleContext ctx, String sparqlEndpoint) {
@@ -95,15 +100,17 @@ public class SilkJob {
 			provider.serialize(rdfOS, inputGraph, SupportedFormat.RDF_XML) ;
 			rdfOS.close() ;
 			buildConfig() ;
-			//silk.excute() ;
+
 			silk.executeStream(IOUtils.toInputStream(config, "UTF-8"), null, 1, true) ;
-			// TODO: output->MGraph and MGraph->Metadata
+			
+			//  output->MGraph and MGraph->Metadata
 			MGraph rdfGraph = new IndexedMGraph();
 			InputStream is = new FileInputStream(outputData) ;
-			@SuppressWarnings("unused")
+
 			Set<String> formats  = parser.getSupportedFormats() ;
 			parser.parse(rdfGraph, is, SupportedFormat.N_TRIPLE) ;
 			is.close() ;
+			logger.debug(rdfGraph.size()+"triples extracted for the job: "+jobId) ;
 			if(!rdfGraph.isEmpty())
 				ci.getMetadata().addAll(rdfGraph) ;
 		} catch (Exception e) {
@@ -131,6 +138,7 @@ public class SilkJob {
 			silk = (SilkClient)bundleContext.getService(ref) ;
 		} else {
 			silk = null ;
+			logger.error("Cannot get SilkClient Service for the job: "+jobId) ;
 			throw new Exception("Cannot get SilkClient Service!") ;
 		}
 	}
@@ -141,16 +149,23 @@ public class SilkJob {
 			parser = (Parser)bundleContext.getService(ref) ;
 		}else {
 			parser = null ;
+			logger.error("Unable to find parser for the job: "+jobId) ;
 			throw new Exception("Cannot get parser!") ;
 		}
 	}
 	
+	/**
+	 * builds the configuration for the silk job
+	 * 
+	 * @throws IOException
+	 */
 	private void buildConfig() throws IOException {
 		InputStream cfgIs = this.getClass().getResourceAsStream("/silk-config2.xml") ;
 		String roughConfig = IOUtils.toString(cfgIs, "UTF-8");
 		roughConfig = StringUtils.replace(roughConfig,SPARQL_ENDPOINT_01_TAG, sparqlEndpoint ) ;
 		roughConfig = StringUtils.replace(roughConfig, CI_METADATA_TAG, rdfData.getAbsolutePath()) ;
 		config = StringUtils.replace(roughConfig, OUTPUT_TMP_TAG, outputData.getAbsolutePath()) ;
+		logger.info("configuration built for the job:" + jobId+"\n"+config) ;
 	}
 	
 	
@@ -159,6 +174,7 @@ public class SilkJob {
 		if(ref!=null) {
 			provider = (SerializingProvider) bundleContext.getService(ref) ;
 		} else {
+			logger.error("Cannot get SerializingProvider Service for the job: "+jobId) ;
 			provider = null ;
 			throw new Exception("Cannot get SerializingProvider Service!") ;
 		}
@@ -166,7 +182,9 @@ public class SilkJob {
 	}
 	
 	
-	@SuppressWarnings("unused")
+	/**
+	 * Removes temporary files 
+	 */
 	private void cleanUpFiles() {
 		if(holdDataFiles)
 			return ;
