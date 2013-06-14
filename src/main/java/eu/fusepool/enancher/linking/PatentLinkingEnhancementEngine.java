@@ -4,11 +4,14 @@
 package eu.fusepool.enancher.linking;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.StringWriter;
 import java.util.Collections;
 import java.util.Dictionary;
 import java.util.Map;
 
 import org.apache.clerezza.rdf.core.serializedform.SupportedFormat;
+import org.apache.commons.io.IOUtils;
 import org.apache.felix.scr.annotations.Activate;
 import org.apache.felix.scr.annotations.Component;
 import org.apache.felix.scr.annotations.Properties;
@@ -62,7 +65,8 @@ public class PatentLinkingEnhancementEngine
 	 */
 	public static final Integer defaultOrder = ORDERING_EXTRACTION_ENHANCEMENT;
 
-	public static final String DEFAULT_SPARQL_ENDPOINT_01 = "http://localhost:8080/sparql" ;
+	public static final String DEFAULT_SPARQL_ENDPOINT_01 = "http://platform.fusepool.info/sparql" ; 
+			//"http://localhost:8080/sparql" ;
 	public static final String SPARQL_ENDPOINT_01_NAME = "SPARQL_ENDPOINT_01";
 	
 	protected ComponentContext componentContext ;
@@ -72,6 +76,9 @@ public class PatentLinkingEnhancementEngine
 			"http://platform.fusepool.info/sparql" ;
 	
 	final Logger logger = LoggerFactory.getLogger(this.getClass()) ;
+	
+	private final static boolean isDebug = true ;
+	
 	
 	/* (non-Javadoc)
 	 * @see org.apache.stanbol.enhancer.servicesapi.ServiceProperties#getServiceProperties()
@@ -107,6 +114,12 @@ public class PatentLinkingEnhancementEngine
 		SilkJob job = new SilkJob(bundleContext, sparqlEndpoint) ;
 		
 		try {
+			if(isDebug) {
+				InputStream cIs = ci.getStream() ;
+				StringWriter writer = new StringWriter();
+				IOUtils.copy(cIs, writer) ;
+				logger.info("ContentItem:\n"+writer.toString()) ;
+			}
 			job.exceuteJob(ci) ;
 		} catch (Exception e) {
 			logger.error("Error : ", e) ;

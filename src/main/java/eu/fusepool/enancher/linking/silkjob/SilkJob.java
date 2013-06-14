@@ -3,18 +3,21 @@
  */
 package eu.fusepool.enancher.linking.silkjob;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.StringWriter;
 import java.util.Set;
 import java.util.UUID;
 
 import org.apache.clerezza.rdf.core.MGraph;
 import org.apache.clerezza.rdf.core.TripleCollection;
 import org.apache.clerezza.rdf.core.serializedform.Parser;
+import org.apache.clerezza.rdf.core.serializedform.Serializer;
 import org.apache.clerezza.rdf.core.serializedform.SerializingProvider;
 import org.apache.clerezza.rdf.core.serializedform.SupportedFormat;
 import org.apache.commons.io.IOUtils;
@@ -42,7 +45,7 @@ public class SilkJob {
 	String sparqlEndpoint ;
 	
 	private static final boolean holdDataFiles = true ;
-	private static final boolean debug = true ;
+	private static final boolean isDebug = true ;
 	//private boolean stick2RDF_XML = false ;
 	
 	protected BundleContext    bundleContext ;
@@ -51,7 +54,8 @@ public class SilkJob {
 	private String jobId ;
 	SilkClient 	   silk ;
 	Parser		   parser ;
-	org.apache.clerezza.rdf.core.serializedform.SerializingProvider provider = null ;
+	SerializingProvider provider = null ;
+	Serializer serializer ;
 	File rdfData ;
 	File outputData ;
 	
@@ -92,12 +96,21 @@ public class SilkJob {
 					return ;
 				} else {
 					inputGraph = ciMetadata ;
+					provider.serialize(rdfOS, inputGraph, SupportedFormat.RDF_XML) ;
 				}
 			} else {
 				content2Enhance = ci.getStream() ;
-				inputGraph = parser.parse(content2Enhance, SupportedFormat.RDF_XML ) ;
+				IOUtils.copy(content2Enhance, rdfOS) ;
+				//inputGraph = parser.parse(content2Enhance, SupportedFormat.RDF_XML ) ;
 			}
-			provider.serialize(rdfOS, inputGraph, SupportedFormat.RDF_XML) ;
+			/*
+			if(isDebug) {
+				ByteArrayOutputStream buffer = new ByteArrayOutputStream() ;
+				provider.serialize(buffer, inputGraph, SupportedFormat.RDF_XML) ;
+				String msg = new String(buffer.toByteArray()) ;
+				logger.info("triple collection (RDF/XML):\n"+msg) ;
+			}
+			*/
 			rdfOS.close() ;
 			buildConfig() ;
 
@@ -160,7 +173,7 @@ public class SilkJob {
 	 * @throws IOException
 	 */
 	private void buildConfig() throws IOException {
-		InputStream cfgIs = this.getClass().getResourceAsStream("/silk-config2.xml") ;
+		InputStream cfgIs = this.getClass().getResourceAsStream("/silk-config3.xml") ;
 		String roughConfig = IOUtils.toString(cfgIs, "UTF-8");
 		roughConfig = StringUtils.replace(roughConfig,SPARQL_ENDPOINT_01_TAG, sparqlEndpoint ) ;
 		roughConfig = StringUtils.replace(roughConfig, CI_METADATA_TAG, rdfData.getAbsolutePath()) ;
@@ -170,7 +183,9 @@ public class SilkJob {
 	
 	
 	private void getSerializer() throws Exception {
-		ServiceReference ref = bundleContext.getServiceReference("org.apache.clerezza.rdf.core.serializedform.SerializingProvider") ;
+		serializer = Serializer.getInstance() ;
+		/*
+		ServiceReference ref = bundleContext.getServiceReference(SerializingProvider.class.getName()) ;
 		if(ref!=null) {
 			provider = (SerializingProvider) bundleContext.getService(ref) ;
 		} else {
@@ -178,6 +193,7 @@ public class SilkJob {
 			provider = null ;
 			throw new Exception("Cannot get SerializingProvider Service!") ;
 		}
+		*/
 		
 	}
 	

@@ -12,7 +12,8 @@
 		<DataSource id="local_store" type="sparqlEndpoint">
 			<Param name="endpointURI" value="[SPARQL_ENDPOINT_01]" />
 			<Param name="retryCount" value="3" />
-			<Param name="graph" value="urn:x-localhost:/ecs-collected-enhancements.graph"></Param>
+			<Param name="graph" value="urn:fusepool-patent-02"></Param>
+			<!-- <Param name="graph" value="urn:x-localhost:/ecs-collected-enhancements.graph"></Param> -->
 			<Param name="format" value="RDF/XML"></Param>
 			<Param name="login" value="admin"></Param>
 			<Param name="password" value="admin"></Param>

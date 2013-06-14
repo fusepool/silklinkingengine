@@ -1,0 +1,100 @@
+<Silk>
+	<Prefixes>
+		<Prefix namespace="http://www.w3.org/1999/02/22-rdf-syntax-ns#" id="rdf"></Prefix>
+		<Prefix namespace="http://www.w3.org/2002/07/owl#" id="owl"></Prefix>
+		<Prefix namespace="http://xmlns.com/foaf/0.1/" id="foaf"></Prefix>
+		<Prefix namespace="http://www.w3.org/2000/01/rdf-schema#" id="rdfs"></Prefix>
+		<Prefix namespace="http://www.patexpert.org/ontologies/pmo.owl#" id="pmo"></Prefix>
+		<Prefix namespace="http://purl.org/dc/terms/" id="dcterms"></Prefix>
+		<Prefix namespace="http://fise.iks-project.eu/ontology/" id="fise"></Prefix>
+	</Prefixes>
+	<DataSources>
+		<DataSource id="endpoint" type="sparqlEndpoint">
+		    <Param name="endpointURI" value="[SPARQL_ENDPOINT_01]" />
+			<!-- <Param name="endpointURI" value="http://platform.fusepool.info/sparql" />-->
+			<!--Param name="endpointURI" value="http://localhost:8080/sparql" /-->
+			<Param name="graph" value=""></Param>
+			<Param name="retryCount" value="3"></Param>
+			<Param name="retryPause" value="1000"></Param>
+			<Param name="login" value="admin"></Param>
+			<Param name="password" value="admin"></Param>
+		</DataSource>
+		
+		<DataSource id="document" type="file">
+		    <Param name="file" value="[CI_METADATA_FILE]"></Param>
+			<!-- <Param name="file" value="/home/luigi/Downloads/silk_2.5.3/ep-1000000-a1.rdf"></Param>-->
+			<Param name="format" value="RDF/XML"></Param>
+		</DataSource>
+	</DataSources>
+
+	<Interlinks>
+		<!--Interlink id="persons">
+			<LinkType>owl:sameAs</LinkType>
+			<SourceDataset dataSource="document" var="person_a">
+				<RestrictTo> ?person_a rdf:type foaf:Person . </RestrictTo>
+			</SourceDataset>
+			<TargetDataset dataSource="endpoint" var="person_b">
+				<RestrictTo> ?person_b rdf:type foaf:Person . </RestrictTo>
+			</TargetDataset>
+			<LinkageRule>
+				<Aggregate type="average">
+					<Compare metric="jaro">
+						<Input path="?person_a/foaf:name"></Input>
+						<Input path="?person_b/foaf:name"></Input>
+					</Compare>
+				</Aggregate>
+			</LinkageRule>
+			<Filter threshold="0.0"></Filter>
+			<Outputs>
+			 
+				<Output type="file" minConfidence="0.1">
+					<Param name="file"
+						value="/home/luigi/Downloads/silk_2.5.3/person_out.txt" />
+					<Param name="format" value="ntriples" />
+				</Output>
+			
+			</Outputs>
+		</Interlink-->
+		<Interlink id="patents">
+			<LinkType>owl:sameAs</LinkType>
+			<SourceDataset dataSource="document" var="patent_a">
+				<RestrictTo>
+                ?patent_a &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#type&gt; &lt;http://www.patexpert.org/ontologies/pmo.owl#PatentPublication&gt; .
+              </RestrictTo>
+			</SourceDataset>
+			<TargetDataset dataSource="endpoint" var="patent_b">
+				<RestrictTo>
+                ?patent_b &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#type&gt; &lt;http://www.patexpert.org/ontologies/pmo.owl#PatentPublication&gt; .
+              </RestrictTo>
+			</TargetDataset>
+			<LinkageRule>
+					<Compare metric="jaccard" threshold="0.2">
+						<TransformInput function="tokenize">
+						<Input path="?patent_a/dcterms:title"></Input>
+						</TransformInput>
+						<TransformInput function="tokenize">
+						<Input path="?patent_b/dcterms:title"></Input>
+						</TransformInput>
+					</Compare>
+			</LinkageRule>
+			<Filter threshold="0.1"></Filter>
+			<Outputs>
+			 
+			    <Output type="file" minConfidence="0.1">
+					<Param name="file"
+						value="[OUTPUT_TMP_FILE_PATH]" />
+					<Param name="format" value="ntriples" />
+				</Output>
+				<!-- 
+				<Output type="file" minConfidence="0.1">
+					<Param name="file"
+						value="/home/luigi/Downloads/silk_2.5.3/patent_out.txt" />
+					<Param name="format" value="ntriples" />
+				</Output>
+				-->			
+			</Outputs>
+
+		</Interlink>
+		
+	</Interlinks>
+</Silk>
