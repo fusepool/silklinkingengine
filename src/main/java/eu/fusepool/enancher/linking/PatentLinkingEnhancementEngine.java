@@ -65,7 +65,7 @@ public class PatentLinkingEnhancementEngine
 	 */
 	public static final Integer defaultOrder = ORDERING_EXTRACTION_ENHANCEMENT;
 
-	public static final String DEFAULT_SPARQL_ENDPOINT_01 = "http://platform.fusepool.info/sparql" ; 
+	public static final String DEFAULT_SPARQL_ENDPOINT_01 = "http://localhost/sparql" ; 
 			//"http://localhost:8080/sparql" ;
 	public static final String SPARQL_ENDPOINT_01_NAME = "SPARQL_ENDPOINT_01";
 	
