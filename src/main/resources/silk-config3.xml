@@ -13,7 +13,8 @@
 		    <Param name="endpointURI" value="[SPARQL_ENDPOINT_01]" />
 			<!-- <Param name="endpointURI" value="http://platform.fusepool.info/sparql" />-->
 			<!--Param name="endpointURI" value="http://localhost:8080/sparql" /-->
-			<Param name="graph" value=""></Param>
+			<!-- <Param name="graph" value=""></Param>-->
+			[GRAPH_PARAMETER]
 			<Param name="retryCount" value="3"></Param>
 			<Param name="retryPause" value="1000"></Param>
 			<Param name="login" value="admin"></Param>

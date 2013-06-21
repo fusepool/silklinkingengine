@@ -40,9 +40,13 @@ public class SilkJob {
 	private static final String CI_METADATA_TAG 		= "[CI_METADATA_FILE]" ;
 	private static final String OUTPUT_TMP_TAG  		= "[OUTPUT_TMP_FILE_PATH]";
 	private static final String SPARQL_ENDPOINT_01_TAG  = "[SPARQL_ENDPOINT_01]" ;
+	private static final String SPARQL_GRAPH_01_TAG 	= "[GRAPH_PARAMETER]" ;
+			
 	
-	// local sparql endpoint
+	// sparql endpoint
 	String sparqlEndpoint ;
+	String sparqlGraph ;
+	
 	
 	private static final boolean holdDataFiles = true ;
 	private static final boolean isDebug = true ;
@@ -65,9 +69,10 @@ public class SilkJob {
 	
 	
 	
-	public SilkJob(BundleContext ctx, String sparqlEndpoint) {
+	public SilkJob(BundleContext ctx, String sparqlEndpoint, String graphName) {
 		bundleContext = ctx ;
 		this.sparqlEndpoint = sparqlEndpoint ;
+		this.sparqlGraph = graphName ;
 		//stick2RDF_XML = stick2rdfxml ;
 	}
 	
@@ -176,6 +181,12 @@ public class SilkJob {
 		InputStream cfgIs = this.getClass().getResourceAsStream("/silk-config3.xml") ;
 		String roughConfig = IOUtils.toString(cfgIs, "UTF-8");
 		roughConfig = StringUtils.replace(roughConfig,SPARQL_ENDPOINT_01_TAG, sparqlEndpoint ) ;
+		if(sparqlGraph!=null && !"".equals(sparqlGraph)) {
+			String graphParamFragment = "<Param name=\"graph\" value=\""+sparqlGraph+"\"" +"></Param>" ;
+			roughConfig = StringUtils.replace(roughConfig, SPARQL_GRAPH_01_TAG, graphParamFragment) ;
+		} else { 
+			roughConfig = StringUtils.replace(roughConfig, SPARQL_GRAPH_01_TAG, "") ;
+		}
 		roughConfig = StringUtils.replace(roughConfig, CI_METADATA_TAG, rdfData.getAbsolutePath()) ;
 		config = StringUtils.replace(roughConfig, OUTPUT_TMP_TAG, outputData.getAbsolutePath()) ;
 		logger.info("configuration built for the job:" + jobId+"\n"+config) ;
@@ -222,5 +233,19 @@ public class SilkJob {
 	 */
 	public void setSparqlEndpoint(String sparqlEndpoint) {
 		this.sparqlEndpoint = sparqlEndpoint;
+	}
+
+	/**
+	 * @return the sparqlGraph
+	 */
+	public String getSparqlGraph() {
+		return sparqlGraph;
+	}
+
+	/**
+	 * @param sparqlGraph the sparqlGraph to set
+	 */
+	public void setSparqlGraph(String sparqlGraph) {
+		this.sparqlGraph = sparqlGraph;
 	}
 }

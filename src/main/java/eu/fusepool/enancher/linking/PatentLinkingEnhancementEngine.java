@@ -14,6 +14,7 @@ import org.apache.clerezza.rdf.core.serializedform.SupportedFormat;
 import org.apache.commons.io.IOUtils;
 import org.apache.felix.scr.annotations.Activate;
 import org.apache.felix.scr.annotations.Component;
+import org.apache.felix.scr.annotations.ConfigurationPolicy;
 import org.apache.felix.scr.annotations.Properties;
 import org.apache.felix.scr.annotations.Property;
 import org.apache.felix.scr.annotations.Service;
@@ -36,13 +37,15 @@ import eu.fusepool.enancher.linking.silkjob.SilkJob;
  * @author giorgio
  *
  */
-@Component(immediate=true, metatype=true)
+@Component(immediate = true, metatype = true,
+configurationFactory = true, //allow multiple instances
+ policy = ConfigurationPolicy.OPTIONAL) //create a default instance with the default configuration
 @Service
 @Properties( value={
 	@Property(name=EnhancementEngine.PROPERTY_NAME, value=PatentLinkingEnhancementEngine.DEFAULT_ENGINE_NAME),
 	@Property(name=Constants.SERVICE_RANKING,intValue=PatentLinkingEnhancementEngine.DEFAULT_SERVICE_RANKING),
-	@Property(name=PatentLinkingEnhancementEngine.SPARQL_ENDPOINT_01_NAME, value=PatentLinkingEnhancementEngine.DEFAULT_SPARQL_ENDPOINT_01, description="SPARQL endpoint")
-	//@Property(name="STICK2RDF_XML", boolValue=false, description="Checks content item mime type")
+	@Property(name=PatentLinkingEnhancementEngine.SPARQL_ENDPOINT_01_NAME, value=PatentLinkingEnhancementEngine.DEFAULT_SPARQL_ENDPOINT_01, description="SPARQL endpoint"),
+	@Property(name=PatentLinkingEnhancementEngine.SPARQL_GRAPH_01_NAME, value="", description="Sparql graph")
 	})
 
 public class PatentLinkingEnhancementEngine
@@ -51,6 +54,8 @@ public class PatentLinkingEnhancementEngine
 
 	
 	public static final String DEFAULT_ENGINE_NAME = "PatentLinkingEnhancer" ;
+	
+	
 	
 	/**
 	 * Default value for the {@link Constants#SERVICE_RANKING} used by this engine.
@@ -68,12 +73,18 @@ public class PatentLinkingEnhancementEngine
 	public static final String DEFAULT_SPARQL_ENDPOINT_01 = "http://localhost/sparql" ; 
 			//"http://localhost:8080/sparql" ;
 	public static final String SPARQL_ENDPOINT_01_NAME = "SPARQL_ENDPOINT_01";
+	public static final String SPARQL_GRAPH_01_NAME    = "SPARQL_GRAPH_01" ; 
+	
+	
 	
 	protected ComponentContext componentContext ;
 	protected BundleContext    bundleContext ;
 	
 	String sparqlEndpoint = //"http://localhost:8080/sparql" ; 
 			"http://platform.fusepool.info/sparql" ;
+	
+	String sparqlGraph = null ;
+	
 	
 	final Logger logger = LoggerFactory.getLogger(this.getClass()) ;
 	
@@ -111,7 +122,7 @@ public class PatentLinkingEnhancementEngine
 	 */
 	public void computeEnhancements(ContentItem ci) throws EngineException {
 		
-		SilkJob job = new SilkJob(bundleContext, sparqlEndpoint) ;
+		SilkJob job = new SilkJob(bundleContext, sparqlEndpoint, sparqlGraph) ;
 		
 		try {
 			if(isDebug) {
@@ -140,6 +151,15 @@ public class PatentLinkingEnhancementEngine
 		if(o!=null && !"".equals(o.toString()))  {
 			sparqlEndpoint = (String) o ;
 		}
+		
+		o = dict.get(PatentLinkingEnhancementEngine.SPARQL_GRAPH_01_NAME) ;
+			if(o!=null && !"".equals(o.toString()))  {
+				sparqlGraph = (String) o ;
+			} else {
+				sparqlGraph = null ;
+			}
+		
+		
 		
 		/*
 		 o = dict.get("STICK2RDF_XML") ;
