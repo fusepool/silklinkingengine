@@ -1,7 +1,7 @@
 /**
  * 
  */
-package eu.fusepool.enancher.linking.silkjob;
+package eu.fusepool.enhancer.linking.silkjob;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;

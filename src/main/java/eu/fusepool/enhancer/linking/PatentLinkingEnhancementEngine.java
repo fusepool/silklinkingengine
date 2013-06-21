@@ -1,7 +1,7 @@
 /**
  * 
  */
-package eu.fusepool.enancher.linking;
+package eu.fusepool.enhancer.linking;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -30,7 +30,7 @@ import org.osgi.service.component.ComponentContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import eu.fusepool.enancher.linking.silkjob.SilkJob;
+import eu.fusepool.enhancer.linking.silkjob.SilkJob;
 
 
 /**
