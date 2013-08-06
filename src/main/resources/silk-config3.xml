@@ -11,9 +11,6 @@
 	<DataSources>
 		<DataSource id="endpoint" type="sparqlEndpoint">
 		    <Param name="endpointURI" value="[SPARQL_ENDPOINT_01]" />
-			<!-- <Param name="endpointURI" value="http://platform.fusepool.info/sparql" />-->
-			<!--Param name="endpointURI" value="http://localhost:8080/sparql" /-->
-			<!-- <Param name="graph" value=""></Param>-->
 			[GRAPH_PARAMETER]
 			<Param name="retryCount" value="3"></Param>
 			<Param name="retryPause" value="1000"></Param>
@@ -29,33 +26,7 @@
 	</DataSources>
 
 	<Interlinks>
-		<!--Interlink id="persons">
-			<LinkType>owl:sameAs</LinkType>
-			<SourceDataset dataSource="document" var="person_a">
-				<RestrictTo> ?person_a rdf:type foaf:Person . </RestrictTo>
-			</SourceDataset>
-			<TargetDataset dataSource="endpoint" var="person_b">
-				<RestrictTo> ?person_b rdf:type foaf:Person . </RestrictTo>
-			</TargetDataset>
-			<LinkageRule>
-				<Aggregate type="average">
-					<Compare metric="jaro">
-						<Input path="?person_a/foaf:name"></Input>
-						<Input path="?person_b/foaf:name"></Input>
-					</Compare>
-				</Aggregate>
-			</LinkageRule>
-			<Filter threshold="0.0"></Filter>
-			<Outputs>
-			 
-				<Output type="file" minConfidence="0.1">
-					<Param name="file"
-						value="/home/luigi/Downloads/silk_2.5.3/person_out.txt" />
-					<Param name="format" value="ntriples" />
-				</Output>
-			
-			</Outputs>
-		</Interlink-->
+		
 		<Interlink id="patents">
 			<LinkType>owl:sameAs</LinkType>
 			<SourceDataset dataSource="document" var="patent_a">
@@ -86,13 +57,7 @@
 						value="[OUTPUT_TMP_FILE_PATH]" />
 					<Param name="format" value="ntriples" />
 				</Output>
-				<!-- 
-				<Output type="file" minConfidence="0.1">
-					<Param name="file"
-						value="/home/luigi/Downloads/silk_2.5.3/patent_out.txt" />
-					<Param name="format" value="ntriples" />
-				</Output>
-				-->			
+				
 			</Outputs>
 
 		</Interlink>
