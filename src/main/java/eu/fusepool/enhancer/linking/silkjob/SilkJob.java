@@ -11,10 +11,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.StringWriter;
+import java.util.Iterator;
 import java.util.Set;
 import java.util.UUID;
 
 import org.apache.clerezza.rdf.core.MGraph;
+import org.apache.clerezza.rdf.core.Triple;
 import org.apache.clerezza.rdf.core.TripleCollection;
 import org.apache.clerezza.rdf.core.serializedform.Parser;
 import org.apache.clerezza.rdf.core.serializedform.Serializer;
@@ -29,6 +31,7 @@ import org.osgi.framework.ServiceReference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import eu.fusepool.enhancer.linking.SameAsSmusher;
 import eu.fusepool.java.silk.client.SilkClient;
 
 /**
@@ -60,7 +63,7 @@ public class SilkJob {
 	Parser		   parser ;
 	SerializingProvider provider = null ;
 	Serializer serializer ;
-	File rdfData ;
+	File rdfData ; // source RDF data
 	File outputData ;
 	
 	String config ;
@@ -77,11 +80,11 @@ public class SilkJob {
 	}
 	
 	@SuppressWarnings("unused")
-	public void exceuteJob(ContentItem ci) throws Exception {
+	public MGraph exceuteJob(ContentItem ci) throws Exception {
 		
 		jobId = UUID.randomUUID().toString() ;
 		try {
-			InputStream content2Enhance = null ; 
+			InputStream content2Enhance = null ; //RDF data to be passed to Silk 
 			TripleCollection inputGraph = null;
 			
 			
@@ -94,11 +97,13 @@ public class SilkJob {
 			OutputStream rdfOS = new FileOutputStream(rdfData) ;
 			
 			String mimeType=ci.getMimeType() ;	
-			if(!SupportedFormat.RDF_XML.equals(mimeType)) {
+			//If the Content type is RDF/XML it takes the contentitem data otherwise it takes 
+			//the metadata if not empty
+			if( !SupportedFormat.RDF_XML.equals(mimeType) ) {
 				MGraph ciMetadata = ci.getMetadata() ;
 				if(ciMetadata.isEmpty()) {
 					// nothing to enhance :-(
-					return ;
+					return null;
 				} else {
 					inputGraph = ciMetadata ;
 					provider.serialize(rdfOS, inputGraph, SupportedFormat.RDF_XML) ;
@@ -121,16 +126,25 @@ public class SilkJob {
 
 			silk.executeStream(IOUtils.toInputStream(config, "UTF-8"), null, 1, true) ;
 			
-			//  output->MGraph and MGraph->Metadata
-			MGraph rdfGraph = new IndexedMGraph();
+			//  This graph will contain the results of the duplicate detection i.e. owl:sameAs statements
+			MGraph owlSameAsStatements = new IndexedMGraph();
 			InputStream is = new FileInputStream(outputData) ;
 
 			Set<String> formats  = parser.getSupportedFormats() ;
-			parser.parse(rdfGraph, is, SupportedFormat.N_TRIPLE) ;
+			parser.parse(owlSameAsStatements, is, SupportedFormat.N_TRIPLE) ;
 			is.close() ;
-			logger.debug(rdfGraph.size()+"triples extracted for the job: "+jobId) ;
-			if(!rdfGraph.isEmpty())
-				ci.getMetadata().addAll(rdfGraph) ;
+			logger.info(owlSameAsStatements.size() + " triples extracted by job: " + jobId) ;
+			
+			if(!owlSameAsStatements.isEmpty()){
+				
+				//SameAsSmusher.smush(owlSameAsStatements, owlSameAsStatements);
+				
+				//ci.getMetadata().addAll(owlSameAsStatements) ;	
+				
+			}
+			
+			return owlSameAsStatements;
+				
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
 			throw e ;
@@ -178,11 +192,11 @@ public class SilkJob {
 	 * @throws IOException
 	 */
 	private void buildConfig() throws IOException {
-		InputStream cfgIs = this.getClass().getResourceAsStream("/silk-config3.xml") ;
+		InputStream cfgIs = this.getClass().getResourceAsStream("/silk-config-applicants-test.xml") ;
 		String roughConfig = IOUtils.toString(cfgIs, "UTF-8");
 		roughConfig = StringUtils.replace(roughConfig,SPARQL_ENDPOINT_01_TAG, sparqlEndpoint ) ;
 		if(sparqlGraph!=null && !"".equals(sparqlGraph)) {
-			String graphParamFragment = "<Param name=\"graph\" value=\""+sparqlGraph+"\"" +"></Param>" ;
+			String graphParamFragment = "<Param name=\"graph\" value=\"" + sparqlGraph + "\"" + "></Param>" ;
 			roughConfig = StringUtils.replace(roughConfig, SPARQL_GRAPH_01_TAG, graphParamFragment) ;
 		} else { 
 			roughConfig = StringUtils.replace(roughConfig, SPARQL_GRAPH_01_TAG, "") ;

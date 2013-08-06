@@ -8,8 +8,11 @@ import java.io.InputStream;
 import java.io.StringWriter;
 import java.util.Collections;
 import java.util.Dictionary;
+import java.util.Iterator;
 import java.util.Map;
 
+import org.apache.clerezza.rdf.core.MGraph;
+import org.apache.clerezza.rdf.core.Triple;
 import org.apache.clerezza.rdf.core.serializedform.SupportedFormat;
 import org.apache.commons.io.IOUtils;
 import org.apache.felix.scr.annotations.Activate;
@@ -44,8 +47,8 @@ configurationFactory = true, //allow multiple instances
 @Properties( value={
 	@Property(name=EnhancementEngine.PROPERTY_NAME, value=PatentLinkingEnhancementEngine.DEFAULT_ENGINE_NAME),
 	@Property(name=Constants.SERVICE_RANKING,intValue=PatentLinkingEnhancementEngine.DEFAULT_SERVICE_RANKING),
-	@Property(name=PatentLinkingEnhancementEngine.SPARQL_ENDPOINT_01_NAME, value=PatentLinkingEnhancementEngine.DEFAULT_SPARQL_ENDPOINT_01, description="SPARQL endpoint"),
-	@Property(name=PatentLinkingEnhancementEngine.SPARQL_GRAPH_01_NAME, value="", description="Sparql graph")
+	@Property(name=PatentLinkingEnhancementEngine.SPARQL_ENDPOINT_LABEL, value="", description="SPARQL endpoint of the target (master) repository"),
+	@Property(name=PatentLinkingEnhancementEngine.GRAPH_LABEL, value="", description="Graph")
 	})
 
 public class PatentLinkingEnhancementEngine
@@ -70,20 +73,21 @@ public class PatentLinkingEnhancementEngine
 	 */
 	public static final Integer defaultOrder = ORDERING_EXTRACTION_ENHANCEMENT;
 
-	public static final String DEFAULT_SPARQL_ENDPOINT_01 = "http://localhost/sparql" ; 
-			//"http://localhost:8080/sparql" ;
-	public static final String SPARQL_ENDPOINT_01_NAME = "SPARQL_ENDPOINT_01";
-	public static final String SPARQL_GRAPH_01_NAME    = "SPARQL_GRAPH_01" ; 
+	public static final String DEFAULT_SPARQL_ENDPOINT = "http://localhost:8080/sparql" ; 
+	public static final String DEFAULT_GRAPH = "urn:x-localinstance:/content.graph" ;
+
+	// Labels for the component configuration panel
+	public static final String SPARQL_ENDPOINT_LABEL = "Endpoint";
+	public static final String GRAPH_LABEL    = "Graph" ; 
 	
 	
 	
 	protected ComponentContext componentContext ;
 	protected BundleContext    bundleContext ;
 	
-	String sparqlEndpoint = //"http://localhost:8080/sparql" ; 
-			"http://platform.fusepool.info/sparql" ;
+	String sparqlEndpoint = this.DEFAULT_SPARQL_ENDPOINT; 
 	
-	String sparqlGraph = null ;
+	String sparqlGraph = "";
 	
 	
 	final Logger logger = LoggerFactory.getLogger(this.getClass()) ;
@@ -103,17 +107,17 @@ public class PatentLinkingEnhancementEngine
 	 * @see org.apache.stanbol.enhancer.servicesapi.EnhancementEngine#canEnhance(org.apache.stanbol.enhancer.servicesapi.ContentItem)
 	 */
 	public int canEnhance(ContentItem ci) throws EngineException {
-		
-		//if(stick2rdfxml==false) 
-		//	return ENHANCE_SYNCHRONOUS ;
-		
+		/*
 		if(SupportedFormat.RDF_XML.equals(ci.getMimeType())) 
 			return ENHANCE_ASYNC;
 			
-		if(ci.getMetadata().isEmpty())
+		*/
+		
+		// No RDF data in the content or its metadata field
+		if( (! SupportedFormat.RDF_XML.equals( ci.getMimeType() ) ) && (ci.getMetadata().isEmpty()) )
 			return CANNOT_ENHANCE ;
 		
-		return ENHANCE_ASYNC;
+		return ENHANCE_SYNCHRONOUS;
 		
 	}
 
@@ -123,7 +127,7 @@ public class PatentLinkingEnhancementEngine
 	public void computeEnhancements(ContentItem ci) throws EngineException {
 		
 		SilkJob job = new SilkJob(bundleContext, sparqlEndpoint, sparqlGraph) ;
-		
+		MGraph owlSameAs = null;
 		try {
 			if(isDebug) {
 				InputStream cIs = ci.getStream() ;
@@ -131,7 +135,23 @@ public class PatentLinkingEnhancementEngine
 				IOUtils.copy(cIs, writer) ;
 				logger.info("ContentItem:\n"+writer.toString()) ;
 			}
-			job.exceuteJob(ci) ;
+			
+			owlSameAs = job.exceuteJob(ci) ;
+			
+			if( (owlSameAs != null) && (!owlSameAs.isEmpty()) ) {
+				ci.getMetadata().addAll(owlSameAs) ;
+				
+				// just for debug
+				Iterator<Triple> isameas = owlSameAs.iterator();
+				String stmtResult = "";
+				while(isameas.hasNext()) {
+					Triple sameasStmt = isameas.next();
+					stmtResult += sameasStmt.toString() + "\n";
+					
+				}
+				logger.info(stmtResult);
+			}
+			
 		} catch (Exception e) {
 			logger.error("Error : ", e) ;
 			throw new EngineException(e) ;
@@ -144,36 +164,20 @@ public class PatentLinkingEnhancementEngine
 		this.componentContext = ce ;
 		this.bundleContext = ce.getBundleContext() ;
 		
-		
 		@SuppressWarnings("rawtypes")
 		Dictionary dict = ce.getProperties() ;
-		Object o = dict.get(PatentLinkingEnhancementEngine.SPARQL_ENDPOINT_01_NAME) ;
+		Object o = dict.get(PatentLinkingEnhancementEngine.SPARQL_ENDPOINT_LABEL) ;
 		if(o!=null && !"".equals(o.toString()))  {
 			sparqlEndpoint = (String) o ;
 		}
 		
-		o = dict.get(PatentLinkingEnhancementEngine.SPARQL_GRAPH_01_NAME) ;
+		o = dict.get(PatentLinkingEnhancementEngine.GRAPH_LABEL) ;
 			if(o!=null && !"".equals(o.toString()))  {
 				sparqlGraph = (String) o ;
 			} else {
 				sparqlGraph = null ;
 			}
 		
-		
-		
-		/*
-		 o = dict.get("STICK2RDF_XML") ;
-			if(o!=null)  {
-				stick2rdfxml = (Boolean) o ;
-			}
-			
-			*/
-		
-//	    File f = bundleContext.getDataFile("vaffanculo.txt");
-//	    FileOutputStream os = new FileOutputStream(f);
-//	    os.write("This is just an example\n".getBytes());
-//	    os.flush();
-//	    os.close();
 		
 	}	
 	
