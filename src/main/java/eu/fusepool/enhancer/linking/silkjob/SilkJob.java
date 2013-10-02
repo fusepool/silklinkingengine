@@ -31,7 +31,6 @@ import org.osgi.framework.ServiceReference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import eu.fusepool.enhancer.linking.SameAsSmusher;
 import eu.fusepool.java.silk.client.SilkClient;
 
 /**
@@ -39,6 +38,8 @@ import eu.fusepool.java.silk.client.SilkClient;
  *
  */
 public class SilkJob {
+	
+	private static final Logger logger = LoggerFactory.getLogger(SilkJob.class);
 
 	private static final String CI_METADATA_TAG 		= "[CI_METADATA_FILE]" ;
 	private static final String OUTPUT_TMP_TAG  		= "[OUTPUT_TMP_FILE_PATH]";
@@ -68,19 +69,16 @@ public class SilkJob {
 	
 	String config ;
 	
-	final Logger logger = LoggerFactory.getLogger(this.getClass()) ;
-	
-	
-	
 	public SilkJob(BundleContext ctx, String sparqlEndpoint, String graphName) {
 		bundleContext = ctx ;
 		this.sparqlEndpoint = sparqlEndpoint ;
 		this.sparqlGraph = graphName ;
-		//stick2RDF_XML = stick2rdfxml ;
+		//logger.info("silk job started");
+		System.out.println("silk job started");
 	}
 	
 	@SuppressWarnings("unused")
-	public MGraph exceuteJob(ContentItem ci) throws Exception {
+	public MGraph executeJob(ContentItem ci) throws Exception {
 		
 		jobId = UUID.randomUUID().toString() ;
 		try {
@@ -97,8 +95,8 @@ public class SilkJob {
 			OutputStream rdfOS = new FileOutputStream(rdfData) ;
 			
 			String mimeType=ci.getMimeType() ;	
-			//If the Content type is RDF/XML it takes the contentitem data otherwise it takes 
-			//the metadata if not empty
+			//If the Content type is RDF/XML it takes the RDF data from the contentitem otherwise it takes 
+			//the data from the metadata field of the content item if not empty
 			if( !SupportedFormat.RDF_XML.equals(mimeType) ) {
 				MGraph ciMetadata = ci.getMetadata() ;
 				if(ciMetadata.isEmpty()) {
@@ -118,7 +116,8 @@ public class SilkJob {
 				ByteArrayOutputStream buffer = new ByteArrayOutputStream() ;
 				provider.serialize(buffer, inputGraph, SupportedFormat.RDF_XML) ;
 				String msg = new String(buffer.toByteArray()) ;
-				logger.info("triple collection (RDF/XML):\n"+msg) ;
+				//logger.info("triple collection (RDF/XML):\n"+msg) ;
+				System.out.println("triple collection (RDF/XML):\n" + msg);
 			}
 			*/
 			rdfOS.close() ;
@@ -133,8 +132,8 @@ public class SilkJob {
 			Set<String> formats  = parser.getSupportedFormats() ;
 			parser.parse(owlSameAsStatements, is, SupportedFormat.N_TRIPLE) ;
 			is.close() ;
-			logger.info(owlSameAsStatements.size() + " triples extracted by job: " + jobId) ;
-			
+			//logger.info(owlSameAsStatements.size() + " triples extracted by job: " + jobId) ;
+			System.out.println(owlSameAsStatements.size() + " triples extracted by job: " + jobId);
 			if(!owlSameAsStatements.isEmpty()){
 				
 				//SameAsSmusher.smush(owlSameAsStatements, owlSameAsStatements);
@@ -146,7 +145,7 @@ public class SilkJob {
 			return owlSameAsStatements;
 				
 		} catch (Exception e) {
-			System.out.println(e.getMessage());
+			e.printStackTrace();
 			throw e ;
 		} finally {
 			ci.getLock().writeLock().unlock();
@@ -170,7 +169,8 @@ public class SilkJob {
 			silk = (SilkClient)bundleContext.getService(ref) ;
 		} else {
 			silk = null ;
-			logger.error("Cannot get SilkClient Service for the job: "+jobId) ;
+			//logger.error("Cannot get SilkClient Service for the job: "+jobId) ;
+			System.out.println("Cannot get SilkClient Service for the job: "+jobId);
 			throw new Exception("Cannot get SilkClient Service!") ;
 		}
 	}
@@ -181,7 +181,8 @@ public class SilkJob {
 			parser = (Parser)bundleContext.getService(ref) ;
 		}else {
 			parser = null ;
-			logger.error("Unable to find parser for the job: "+jobId) ;
+			//logger.error("Unable to find parser for the job: "+jobId) ;
+			System.out.println("Unable to find parser for the job: " + jobId);
 			throw new Exception("Cannot get parser!") ;
 		}
 	}
@@ -203,7 +204,8 @@ public class SilkJob {
 		}
 		roughConfig = StringUtils.replace(roughConfig, CI_METADATA_TAG, rdfData.getAbsolutePath()) ;
 		config = StringUtils.replace(roughConfig, OUTPUT_TMP_TAG, outputData.getAbsolutePath()) ;
-		logger.info("configuration built for the job:" + jobId+"\n"+config) ;
+		//logger.info("configuration built for the job:" + jobId+"\n"+config) ;
+		System.out.println("configuration built for the job:" + jobId+"\n" + config);
 	}
 	
 	
