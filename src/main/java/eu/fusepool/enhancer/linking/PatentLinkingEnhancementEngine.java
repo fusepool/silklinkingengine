@@ -18,6 +18,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.felix.scr.annotations.Activate;
 import org.apache.felix.scr.annotations.Component;
 import org.apache.felix.scr.annotations.ConfigurationPolicy;
+import org.apache.felix.scr.annotations.Deactivate;
 import org.apache.felix.scr.annotations.Properties;
 import org.apache.felix.scr.annotations.Property;
 import org.apache.felix.scr.annotations.Service;
@@ -51,14 +52,14 @@ configurationFactory = true, //allow multiple instances
 	@Property(name=PatentLinkingEnhancementEngine.GRAPH_LABEL, value="", description="Graph")
 	})
 
-public class PatentLinkingEnhancementEngine
-		extends AbstractEnhancementEngine<IOException,RuntimeException> 
-		implements EnhancementEngine, ServiceProperties {
+public class PatentLinkingEnhancementEngine 
+extends AbstractEnhancementEngine<IOException,RuntimeException> 
+implements EnhancementEngine, ServiceProperties 
+{
 
+	private static Logger logger = LoggerFactory.getLogger(PatentLinkingEnhancementEngine.class) ;
 	
 	public static final String DEFAULT_ENGINE_NAME = "PatentLinkingEnhancer" ;
-	
-	
 	
 	/**
 	 * Default value for the {@link Constants#SERVICE_RANKING} used by this engine.
@@ -89,15 +90,13 @@ public class PatentLinkingEnhancementEngine
 	
 	String sparqlGraph = "";
 	
-	
-	final Logger logger = LoggerFactory.getLogger(this.getClass()) ;
-	
 	private final static boolean isDebug = true ;
 	
 	
 	/* (non-Javadoc)
 	 * @see org.apache.stanbol.enhancer.servicesapi.ServiceProperties#getServiceProperties()
 	 */
+	
 	public Map<String, Object> getServiceProperties() {
 		return Collections.unmodifiableMap(Collections.singletonMap(
 				ENHANCEMENT_ENGINE_ORDERING, (Object) defaultOrder));
@@ -106,16 +105,13 @@ public class PatentLinkingEnhancementEngine
 	/* (non-Javadoc)
 	 * @see org.apache.stanbol.enhancer.servicesapi.EnhancementEngine#canEnhance(org.apache.stanbol.enhancer.servicesapi.ContentItem)
 	 */
+	
 	public int canEnhance(ContentItem ci) throws EngineException {
-		/*
-		if(SupportedFormat.RDF_XML.equals(ci.getMimeType())) 
-			return ENHANCE_ASYNC;
-			
-		*/
-		
+				
 		// No RDF data in the content or its metadata field
 		if( (! SupportedFormat.RDF_XML.equals( ci.getMimeType() ) ) && (ci.getMetadata().isEmpty()) )
 			return CANNOT_ENHANCE ;
+			
 		
 		return ENHANCE_SYNCHRONOUS;
 		
@@ -133,10 +129,11 @@ public class PatentLinkingEnhancementEngine
 				InputStream cIs = ci.getStream() ;
 				StringWriter writer = new StringWriter();
 				IOUtils.copy(cIs, writer) ;
+				//System.out.println("ContentItem:\n"+writer.toString());
 				logger.info("ContentItem:\n"+writer.toString()) ;
 			}
 			
-			owlSameAs = job.exceuteJob(ci) ;
+			owlSameAs = job.executeJob(ci) ;
 			
 			if( (owlSameAs != null) && (!owlSameAs.isEmpty()) ) {
 				ci.getMetadata().addAll(owlSameAs) ;
@@ -149,11 +146,13 @@ public class PatentLinkingEnhancementEngine
 					stmtResult += sameasStmt.toString() + "\n";
 					
 				}
+				System.out.println(stmtResult);
 				logger.info(stmtResult);
 			}
 			
 		} catch (Exception e) {
 			logger.error("Error : ", e) ;
+			//e.printStackTrace();
 			throw new EngineException(e) ;
 		}
 	}
@@ -178,8 +177,14 @@ public class PatentLinkingEnhancementEngine
 				sparqlGraph = null ;
 			}
 		
+			logger.info("The PatentLinkingEnhancementEngine engine is being activated");
 		
 	}	
+	
+	@Deactivate
+    protected void deactivate(ComponentContext context) {
+        logger.info("The PatentLinkingEnhancementEngine engine is being deactivated");
+    }
 	
 	
 	
