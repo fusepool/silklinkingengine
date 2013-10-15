@@ -2,7 +2,6 @@
 
 # ignore the target folder build by maven from the source code to create an OSGi bundle
 target/
-data/
 # ignore the following hidden files and folders
 .classpath
 .project
