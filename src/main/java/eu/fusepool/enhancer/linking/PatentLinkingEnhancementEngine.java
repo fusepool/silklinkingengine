@@ -74,7 +74,7 @@ implements EnhancementEngine, ServiceProperties
 	 */
 	public static final Integer defaultOrder = ORDERING_EXTRACTION_ENHANCEMENT;
 
-	public static final String DEFAULT_SPARQL_ENDPOINT = "http://localhost:8080/sparql" ; 
+	public static final String DEFAULT_SPARQL_ENDPOINT = "http://localhost:8580/sparql" ; 
 	public static final String DEFAULT_GRAPH = "urn:x-localinstance:/content.graph" ;
 
 	// Labels for the component configuration panel
