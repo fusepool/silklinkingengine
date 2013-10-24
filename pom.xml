@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>eu.fusepool</groupId>
 	<artifactId>silklinking-engine</artifactId>
-	<version>0.1.0</version>
+	<version>1.0-SNAPSHOT</version>
 	<packaging>bundle</packaging>
 
 	<parent>
@@ -130,7 +130,7 @@
 		<dependency>
 			<groupId>eu.fusepool</groupId>
 			<artifactId>silk-fusepool-api</artifactId>
-			<version>0.7.0</version>
+			<version>1.0-SNAPSHOT</version>
 		</dependency>
 
 
