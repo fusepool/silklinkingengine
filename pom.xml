@@ -102,13 +102,12 @@
 		<dependency>
 			<groupId>org.apache.felix</groupId>
 			<artifactId>org.apache.felix.scr.annotations</artifactId>
-                        <version>1.7.0</version>
 		</dependency>
-		<dependency>
+		<!-- using transitive because of issue with scr plugin <dependency>
 			<groupId>org.apache.clerezza</groupId>
 			<artifactId>rdf.core</artifactId>
                         <version>0.14-SNAPSHOT</version>
-		</dependency>
+		</dependency> -->
 		<dependency>
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-lang3</artifactId>
@@ -123,7 +122,6 @@
 		<dependency>
             <groupId>org.apache.clerezza</groupId>
             <artifactId>rdf.ontologies</artifactId>
-            <version>0.12-SNAPSHOT</version>
         </dependency>
 		
 		<dependency>
